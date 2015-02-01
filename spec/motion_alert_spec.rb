@@ -20,6 +20,7 @@ describe Motion::Alert do
       @proc = Proc.new {}
       @subject.add_action("ok", @proc)
     end
+
     it "should add to the action collection" do
       @subject.actions.count.should.equal(1)
       @subject.actions.first.title.should.equal("ok")
@@ -28,36 +29,29 @@ describe Motion::Alert do
   end
 
   describe "#show" do
-    before do
-      @ui_alert_view_show = false
-      @ui_alert_controller_show = false
-
-      @fake_alert_view = stub(:show) do
-        @ui_alert_view_show = true
-      end
-      @fake_alert_view.stub!(:delegate=) do |value|
-      end
-
-      UIAlertView.stub!(:alloc) do
-        stub(:initWithTitle) do |args|
-          @fake_alert_view
-        end
-      end
-    end
+    tests UINavigationController
 
     describe "iOS 7" do
       before do
         UIDevice.currentDevice.stub!(:systemVersion, return: "7.1")
 
+        @subject.add_action("OK", nil)
+      end
+
+      it "should present with the UIAlertView" do
+        alert = UIAlertView.alloc.init
+        alert.mock!("initWithTitle:message:delegate:cancelButtonTitle:otherButtonTitles:") do |title, message, delegate, cancel_text, other_buttons|
+          title.should.equal("title")
+          message.should.equal("message")
+          delegate.should.equal(UIApplication.sharedApplication.delegate)
+          cancel_text.should.be.nil
+          other_buttons.should.be.nil
+          alert
+        end
+
+        UIAlertView.stub!(:alloc, return: alert)
+
         @subject.show
-      end
-
-      it "should present using UIViewAlert" do
-        @ui_alert_view_show.should.be.true
-      end
-
-      it "should not have called UIAlertController" do
-        UIApplication.sharedApplication.keyWindow.rootViewController.visibleViewController.class.should.not.equal(UIAlertController)
       end
     end
 
@@ -65,15 +59,18 @@ describe Motion::Alert do
       before do
         UIDevice.currentDevice.stub!(:systemVersion, return: "8.1")
 
+        @subject.add_action("OK", nil)
+      end
+
+      it "should present with the UIAlertController" do
+        rc = UIApplication.sharedApplication.keyWindow.rootViewController
+        rc.mock!('presentViewController:animated:completion:') do |vc, animated, completion|
+          vc.should.is_a?(UIAlertController).should.be.true
+          animated.should.be.false
+          completion.should.be.nil
+        end
+
         @subject.show
-      end
-
-      it "should not present using UIViewAlert" do
-        @ui_alert_view_show.should.be.false
-      end
-
-      it "should have called UIAlertController" do
-        UIApplication.sharedApplication.keyWindow.rootViewController.visibleViewController.class.should.equal(UIAlertController)
       end
     end
   end

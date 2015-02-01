@@ -56,21 +56,19 @@ module Motion
     end
 
     def alert_view
-      unless @alert_view
-        @alert_view = UIAlertView.alloc.initWithTitle(
-          title,
-          message: message,
-          delegate: UIApplication.sharedApplication.delegate,
-          cancelButtonTitle: nil,
-          otherButtonTitles:
-          nil
-        )
-        self.actions.each do |a|
-          @alert_view.addButtonWithTitle(a.title)
-        end
+      alert_view = UIAlertView.alloc.initWithTitle(
+        title,
+        message: message,
+        delegate: UIApplication.sharedApplication.delegate,
+        cancelButtonTitle: nil,
+        otherButtonTitles:
+        nil
+      )
+      self.actions.each do |a|
+        alert_view.addButtonWithTitle(a.title)
       end
 
-      @alert_view
+      alert_view
     end
 
     def can_show_controller?
