@@ -1,9 +1,13 @@
 # Motion-Alert
+[![Build Status](https://travis-ci.org/squidpunch/motion-alert.svg?branch=master)](https://travis-ci.org/squidpunch/motion-alert)
+[![Gem Version](https://badge.fury.io/rb/motion-alert.svg)](http://badge.fury.io/rb/motion-alert)
 
 Want to just show an alert to your no matter what version of iOS you are on?
 Motion-alert is for you.  Did you know `UIAlert` is deprecated in iOS 8?  You
 should be using `UIAlertController` but if you use that controller on a prior
-iOS version, you're bound to have a bad time.
+iOS version, you're bound to have a bad time.  **Motion Alert** manages this for
+you, you just say you want an alert, buttons to show and the actions on those
+buttons and Motion Alert handles the rest.
 
 ## Installation
 
