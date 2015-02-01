@@ -1,4 +1,6 @@
 # Motion-Alert
+[![Build Status](https://travis-ci.org/squidpunch/motion-alert.svg?branch=master)](https://travis-ci.org/squidpunch/motion-alert)
+[![Gem Version](https://badge.fury.io/rb/motion-alert.svg)](http://badge.fury.io/rb/motion-alert)
 
 Want to just show an alert to your no matter what version of iOS you are on?
 Motion-alert is for you.  Did you know `UIAlert` is deprecated in iOS 8?  You
