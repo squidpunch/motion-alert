@@ -2,10 +2,11 @@ language: objective-c
 before_install:
     - sudo chown -R travis ~/Library/RubyMotion
     - mkdir -p ~/Library/RubyMotion/build
-    - sudo motion update 
+    - sudo motion update
 gemfile:
   - Gemfile
 script:
     - bundle install
     - bundle exec rake clean
     - bundle exec rake spec
+    - bundle exec rake spec target=7.1

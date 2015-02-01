@@ -31,46 +31,39 @@ describe Motion::Alert do
   describe "#show" do
     tests UINavigationController
 
-    describe "iOS 7" do
-      before do
-        UIDevice.currentDevice.stub!(:systemVersion, return: "7.1")
+    before do
+      @clicked_ok = false
+      @subject.add_action("OK", Proc.new { @clicked_ok = true })
+      @subject.show
+    end
 
-        @subject.add_action("OK", nil)
-      end
+    it "should show the dialog values" do
+      view("title").should.not.be.nil
+      view("message").should.not.be.nil
+      view("OK").should.not.be.nil
+    end
 
-      it "should present with the UIAlertView" do
-        alert = UIAlertView.alloc.init
-        alert.mock!("initWithTitle:message:delegate:cancelButtonTitle:otherButtonTitles:") do |title, message, delegate, cancel_text, other_buttons|
-          title.should.equal("title")
-          message.should.equal("message")
-          delegate.should.equal(UIApplication.sharedApplication.delegate)
-          cancel_text.should.be.nil
-          other_buttons.should.be.nil
-          alert
-        end
-
-        UIAlertView.stub!(:alloc, return: alert)
-
-        @subject.show
+    it "should present using the proper mechanism" do
+      if UIDevice.currentDevice.systemVersion == "7.1"
+        alert = NSClassFromString("_UIAlertManager").topMostAlert
+        alert.should.is_a(UIAlertView).should.be.true
+      else
+        views(NSClassFromString("_UIAlertControllerView")).should.not.be.empty
       end
     end
 
-    describe "iOS8" do
-      before do
-        UIDevice.currentDevice.stub!(:systemVersion, return: "8.1")
-
-        @subject.add_action("OK", nil)
-      end
-
-      it "should present with the UIAlertController" do
-        rc = UIApplication.sharedApplication.keyWindow.rootViewController
-        rc.mock!('presentViewController:animated:completion:') do |vc, animated, completion|
-          vc.should.is_a?(UIAlertController).should.be.true
-          animated.should.be.false
-          completion.should.be.nil
-        end
-
-        @subject.show
+    it "should properly call the proc attached to the button" do
+      if UIDevice.currentDevice.systemVersion == "7.1"
+        # tapping the buttons doesnt seem to work in tests so calling the
+        # delegate directly
+        alert = NSClassFromString("_UIAlertManager").topMostAlert
+        UIApplication.sharedApplication.delegate.alertView(alert, clickedButtonAtIndex: 0)
+        @clicked_ok.should.be.true
+      else
+        # Same problem here, we cannot programatically tap these...
+        # So lets mimick what should happen
+        Motion::Alert.instance.selected(0)
+        @clicked_ok.should.be.true
       end
     end
   end

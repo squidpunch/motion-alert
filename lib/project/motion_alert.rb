@@ -78,6 +78,5 @@ module Motion
     def root_controller
       UIApplication.sharedApplication.keyWindow.rootViewController
     end
-
   end
 end
