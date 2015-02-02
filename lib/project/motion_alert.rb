@@ -31,7 +31,9 @@ module Motion
     end
 
     def selected(index)
-      self.actions[index].action.call
+      if action = self.actions[index].action
+        action.call
+      end
     end
 
     private

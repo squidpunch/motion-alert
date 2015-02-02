@@ -34,6 +34,7 @@ describe Motion::Alert do
     before do
       @clicked_ok = false
       @subject.add_action("OK", Proc.new { @clicked_ok = true })
+      @subject.add_action("cancel", nil)
       @subject.show
     end
 
@@ -64,6 +65,12 @@ describe Motion::Alert do
         # So lets mimick what should happen
         Motion::Alert.instance.selected(0)
         @clicked_ok.should.be.true
+      end
+    end
+
+    it "should not raise exception if the button action is nil" do
+      should.not.raise(Exception) do
+        Motion::Alert.instance.selected(1)
       end
     end
   end
