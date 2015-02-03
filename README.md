@@ -26,7 +26,7 @@ Or install it yourself as:
 ## Usage
 
     def show_alert
-      Motion::Alert.new({title: "Alert!", message:"message"}).tap do |a|
+      Motion::Alert.new(title: "Alert!", message:"message").tap do |a|
         a.add_action("OK", Proc.new { puts 'OK!' })
         a.add_action("Cancel", Proc.new { puts 'Cancel!' })
         a.show

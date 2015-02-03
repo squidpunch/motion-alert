@@ -22,12 +22,7 @@ module Motion
     end
 
     def show
-      if can_show_controller?
-        root_controller.presentViewController(alert_view_controller, animated: false, completion: nil)
-      else
-        alert_view.delegate = UIApplication.sharedApplication.delegate
-        alert_view.show
-      end
+      show_as_controller || show_as_alert
     end
 
     def selected(index)
@@ -38,27 +33,42 @@ module Motion
 
     private
 
-    def alert_view_controller
-      alert_view_controller =
-        UIAlertController.alertControllerWithTitle(
-          title,
-          message: message,
-          preferredStyle: UIAlertControllerStyleAlert
-      )
-      self.actions.each do |a|
-        alert_action = UIAlertAction.actionWithTitle(
-          a.title,
-          style: UIAlertActionStyleDefault,
-          handler: ->(arg) { a.action.call }
-        )
-        alert_view_controller.addAction(alert_action)
-      end
+    def show_as_controller
+      return nil if !can_show_controller?
 
-      alert_view_controller
+      alert_controller.tap do |alert|
+        self.actions.each do |a|
+          alert_action = UIAlertAction.actionWithTitle(
+            a.title,
+            style: UIAlertActionStyleDefault,
+            handler: ->(arg) { a.action.call }
+          )
+          alert.addAction(alert_action)
+        end
+
+        root_controller.presentViewController(alert, animated: false, completion: nil)
+      end
+    end
+
+    def show_as_alert
+      alert_view.tap do |alert|
+        self.actions.each do |a|
+          alert.addButtonWithTitle(a.title)
+        end
+        alert.show
+      end
+    end
+
+    def alert_controller
+      UIAlertController.alertControllerWithTitle(
+        title,
+        message: message,
+        preferredStyle: UIAlertControllerStyleAlert
+      )
     end
 
     def alert_view
-      alert_view = UIAlertView.alloc.initWithTitle(
+      UIAlertView.alloc.initWithTitle(
         title,
         message: message,
         delegate: UIApplication.sharedApplication.delegate,
@@ -66,11 +76,6 @@ module Motion
         otherButtonTitles:
         nil
       )
-      self.actions.each do |a|
-        alert_view.addButtonWithTitle(a.title)
-      end
-
-      alert_view
     end
 
     def can_show_controller?
