@@ -3,6 +3,7 @@ module Motion
     attr_accessor :title
     attr_accessor :message
     attr_accessor :actions
+    attr_accessor :type
 
     def self.instance
       Dispatch.once { @instance ||= alloc.init }
@@ -13,6 +14,7 @@ module Motion
       instance.tap do |i|
         i.title = options.fetch(:title, nil)
         i.message = options.fetch(:message, nil)
+        i.type = options.fetch(:type, :alert)
         i.actions = Option.new
       end
     end
@@ -23,7 +25,7 @@ module Motion
     end
 
     def show
-      show_as_controller || show_as_alert
+      show_as_controller || show_as_alert || show_as_action_sheet
     end
 
     def selected(index)
@@ -42,15 +44,32 @@ module Motion
     end
 
     def show_as_alert
-      self.actions.attach_to(alert_view).show
+      if type == :alert
+        self.actions.attach_to(alert_view).show
+      end
+    end
+
+    def show_as_action_sheet
+      self.actions.attach_to(action_sheet).showInView(root_controller.view)
     end
 
     def alert_controller
       UIAlertController.alertControllerWithTitle(
         title,
         message: message,
-        preferredStyle: UIAlertControllerStyleAlert
+        preferredStyle: style
       )
+    end
+
+    def style
+      case type
+      when :alert
+        UIAlertControllerStyleAlert
+      when :action_sheet
+        UIAlertControllerStyleActionSheet
+      else
+        UIAlertControllerStyleAlert
+      end
     end
 
     def alert_view
@@ -59,8 +78,17 @@ module Motion
         message: message,
         delegate: UIApplication.sharedApplication.delegate,
         cancelButtonTitle: nil,
-        otherButtonTitles:
-        nil
+        otherButtonTitles: nil
+      )
+    end
+
+    def action_sheet
+      UIActionSheet.alloc.initWithTitle(
+        title,
+        delegate: UIApplication.sharedApplication.delegate,
+        cancelButtonTitle: nil,
+        destructiveButtonTitle: nil,
+        otherButtonTitles: nil
       )
     end
 

@@ -4,4 +4,8 @@ class AppDelegate
   def alertView(alert_view, clickedButtonAtIndex: index)
     Motion::Alert.instance.selected(index)
   end
+
+  def actionSheet(action_sheet, clickedButtonAtIndex: index)
+    Motion::Alert.instance.selected(index)
+  end
 end

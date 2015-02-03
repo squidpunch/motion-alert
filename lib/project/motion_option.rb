@@ -1,8 +1,10 @@
 module Motion
   class Option
     attr_accessor :actions
+
     def initialize
       self.actions = []
+      self
     end
 
     def add(text, &block)
@@ -27,7 +29,7 @@ module Motion
 
     def attach_to(view)
       case view
-      when UIAlertView
+      when UIAlertView, UIActionSheet
         actions.each do |a|
           view.addButtonWithTitle(a.title)
         end
@@ -36,7 +38,7 @@ module Motion
           alert_action = UIAlertAction.actionWithTitle(
             a.title,
             style: UIAlertActionStyleDefault,
-            handler: ->(arg) { a.action.call }
+            handler: ->(arg) { a.action ? a.action.call : nil }
           )
           view.addAction(alert_action)
         end
