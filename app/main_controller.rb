@@ -84,8 +84,8 @@ class MainController < UIViewController
 
   def show_gem_alert
     Motion::Alert.new({title: "Alert!", message:"This is a test message"}).tap do |a|
-      a.add_action("OK", Proc.new { puts 'OK!' })
-      a.add_action("Cancel", Proc.new { puts 'Cancel!' })
+      a.actions.add("OK", Proc.new { puts 'OK!' })
+      a.actions.add("Cancel", Proc.new { puts 'Cancel!' })
       a.show
     end
   end

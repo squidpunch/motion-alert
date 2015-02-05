@@ -15,6 +15,25 @@ describe Motion::Alert do
     @subject.is_a?(Motion::Alert).should.be.true
   end
 
+  describe "actions" do
+    describe "add" do
+      it "should add the proc to the action collection" do
+        result = "this is the return from the proc"
+        @subject.actions.add("ok") { result }
+        @subject.actions.actions.count.should.equal(1)
+        @subject.actions.actions.first.title.should.equal("ok")
+        @subject.actions.actions.first.action.call.should.equal(result)
+      end
+
+      it "should allow a nil block for the action" do
+        @subject.actions.add("ok")
+        @subject.actions.actions.count.should.equal(1)
+        @subject.actions.actions.first.title.should.equal("ok")
+        @subject.actions.actions.first.action.should.be.nil
+      end
+    end
+  end
+
   describe "#add_action" do
     before do
       @proc = Proc.new {}

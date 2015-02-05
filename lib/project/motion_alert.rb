@@ -13,12 +13,13 @@ module Motion
       instance.tap do |i|
         i.title = options.fetch(:title, nil)
         i.message = options.fetch(:message, nil)
-        i.actions = []
+        i.actions = Option.new
       end
     end
 
     def add_action(button_title, action_proc)
-      self.actions << Action.new(button_title, action_proc)
+      puts "Deprecated: use actions.add will be removed in 0.3.0"
+      actions.add(button_title, &action_proc)
     end
 
     def show
@@ -26,18 +27,17 @@ module Motion
     end
 
     def selected(index)
-      if action = self.actions[index].action
-        action.call
-      end
+      actions[index].choose
     end
 
     private
+
 
     def show_as_controller
       return nil if !can_show_controller?
 
       alert_controller.tap do |alert|
-        self.actions.each do |a|
+        self.actions.actions.each do |a|
           alert_action = UIAlertAction.actionWithTitle(
             a.title,
             style: UIAlertActionStyleDefault,
@@ -52,7 +52,7 @@ module Motion
 
     def show_as_alert
       alert_view.tap do |alert|
-        self.actions.each do |a|
+        self.actions.actions.each do |a|
           alert.addButtonWithTitle(a.title)
         end
         alert.show
