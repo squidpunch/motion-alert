@@ -32,31 +32,17 @@ module Motion
 
     private
 
-
     def show_as_controller
       return nil if !can_show_controller?
 
       alert_controller.tap do |alert|
-        self.actions.actions.each do |a|
-          alert_action = UIAlertAction.actionWithTitle(
-            a.title,
-            style: UIAlertActionStyleDefault,
-            handler: ->(arg) { a.action.call }
-          )
-          alert.addAction(alert_action)
-        end
-
+        self.actions.attach_to(alert)
         root_controller.presentViewController(alert, animated: false, completion: nil)
       end
     end
 
     def show_as_alert
-      alert_view.tap do |alert|
-        self.actions.actions.each do |a|
-          alert.addButtonWithTitle(a.title)
-        end
-        alert.show
-      end
+      self.actions.attach_to(alert_view).show
     end
 
     def alert_controller
