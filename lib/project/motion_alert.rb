@@ -19,11 +19,6 @@ module Motion
       end
     end
 
-    def add_action(button_title, action_proc)
-      puts "Deprecated: use actions.add will be removed in 0.3.0"
-      actions.add(button_title, &action_proc)
-    end
-
     def show
       show_as_controller || show_as_alert || show_as_action_sheet
     end
