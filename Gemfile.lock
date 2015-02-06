@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    motion-alert (0.1.2)
+    motion-alert (0.2.0)
 
 GEM
   remote: https://rubygems.org/
