@@ -7,8 +7,8 @@ module Motion
       self
     end
 
-    def add(text, &block)
-      actions << Action.new(text, block)
+    def add(text, style=nil, &block)
+      actions << Action.new(title: text, style: style, action: block)
     end
 
     def [](index)
@@ -30,14 +30,20 @@ module Motion
     def attach_to(view)
       case view
       when UIAlertView, UIActionSheet
-        actions.each do |a|
-          view.addButtonWithTitle(a.title)
+        actions.each_with_index do |action, index|
+          view.addButtonWithTitle(action.title)
+          case action.style
+          when UIAlertActionStyleCancel
+            view.cancelButtonIndex = index
+          when UIAlertActionStyleDestructive
+            view.destructiveButtonIndex = index
+          end
         end
       when UIAlertController
         actions.each do |a|
           alert_action = UIAlertAction.actionWithTitle(
             a.title,
-            style: UIAlertActionStyleDefault,
+            style: a.style,
             handler: ->(arg) { a.action ? a.action.call : nil }
           )
           view.addAction(alert_action)

@@ -1,29 +1,30 @@
 describe Motion::Action do
-  it "should set the title and action values on intialization" do
-    a_proc = Proc.new {}
-    action = Motion::Action.new("title", a_proc)
-
-    action.title.should.equal("title")
-    action.action.should.equal(a_proc)
+  it "should set the title when provided" do
+    Motion::Action.new(title: 'my title').title.should.equal('my title')
   end
 
-  it "allows an action without a proc" do
-    should.not.raise(Exception) do
-      action = Motion::Action.new("title")
-      action.title.should.equal("title")
-      action.action.should.be.nil
-    end
+  it "should default the style" do
+    Motion::Action.new.style.should.equal(UIAlertActionStyleDefault)
+  end
+
+  it "should set the style when provided" do
+    Motion::Action.new(style: UIAlertActionStyleCancel).style.should.equal(UIAlertActionStyleCancel)
+  end
+
+  it "should set the action when provided" do
+    p = Proc.new {}
+    Motion::Action.new(action: p).action.should.equal(p)
   end
 
   describe "#choose" do
     it "should call the proc attached to it" do
       some_proc = Proc.new { "proc result" }
-      Motion::Action.new("title", some_proc).choose.should.equal("proc result")
+      Motion::Action.new(title: "title", action: some_proc).choose.should.equal("proc result")
     end
 
     it "can call choose when there is no proc on the action" do
       should.not.raise(Exception) do
-        Motion::Action.new("title").choose
+        Motion::Action.new(title: "title").choose
       end
     end
   end

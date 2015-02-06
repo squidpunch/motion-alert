@@ -1,10 +1,11 @@
 module Motion
   class Action
-    attr_accessor :title, :action
+    attr_accessor :title, :action, :style
 
-    def initialize(title, action=nil)
-      self.title = title
-      self.action = action
+    def initialize(options = {})
+      self.title = options.fetch(:title, nil)
+      self.action = options.fetch(:action, nil)
+      self.style = options.fetch(:style, nil) || UIAlertActionStyleDefault
     end
 
     def choose
