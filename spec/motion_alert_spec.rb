@@ -116,4 +116,10 @@ describe Motion::Alert do
       end
     end
   end
+
+  describe "#presenter" do
+    it "should default to the root view controller of the key window" do
+      Motion::Alert.instance.presenter.should.equal(UIApplication.sharedApplication.keyWindow.rootViewController)
+    end
+  end
 end

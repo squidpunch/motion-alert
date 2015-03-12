@@ -4,6 +4,7 @@ module Motion
     attr_accessor :message
     attr_accessor :actions
     attr_accessor :type
+    attr_accessor :presenter
 
     def self.instance
       Dispatch.once { @instance ||= alloc.init }
@@ -15,6 +16,7 @@ module Motion
         i.title = options.fetch(:title, nil)
         i.message = options.fetch(:message, nil)
         i.type = options.fetch(:type, :alert)
+        i.presenter = options.fetch(:presenter, UIApplication.sharedApplication.keyWindow.rootViewController)
         i.actions = Option.new
       end
     end
@@ -34,7 +36,7 @@ module Motion
 
       alert_controller.tap do |alert|
         self.actions.attach_to(alert)
-        root_controller.presentViewController(alert, animated: false, completion: nil)
+        presenter.presentViewController(alert, animated: false, completion: nil)
       end
     end
 
@@ -45,7 +47,7 @@ module Motion
     end
 
     def show_as_action_sheet
-      self.actions.attach_to(action_sheet).showInView(root_controller.view)
+      self.actions.attach_to(action_sheet).showInView(presenter.view)
     end
 
     def alert_controller
@@ -89,10 +91,6 @@ module Motion
 
     def can_show_controller?
       !!UIDevice.currentDevice.systemVersion.match("^8")
-    end
-
-    def root_controller
-      UIApplication.sharedApplication.keyWindow.rootViewController
     end
   end
 end
